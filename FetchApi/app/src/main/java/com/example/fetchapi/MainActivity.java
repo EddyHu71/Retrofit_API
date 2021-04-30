@@ -1,9 +1,14 @@
 package com.example.fetchapi;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -16,43 +21,38 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    ListView superList;
-    ArrayAdapter<String> myAdapter;
-    List<String> myHeroes = new ArrayList<>();
-
+    RecyclerView recyclerView;
+    UserAdapter userAdapter;
+    ArrayList<Users> usersArrayList;
+    //improve paging and singleton
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        superList = (ListView) findViewById(R.id.superListView);
-        myAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, myHeroes);
-        superList.setAdapter(myAdapter);
+        recyclerView =  findViewById(R.id.rvContacts);
+        recyclerView.setAdapter(userAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         getSuperHeroes();
     }
 
     private void getSuperHeroes() {
-        Call<List<Results>> call = RetrofitClient.getInstance().getMyApi().getSuperHeroes();
+        Call<List<Users>> call = RetrofitClient.getInstance().getMyApi().getUsers();
 
-        call.enqueue(new Callback<List<Results>>() {
+        call.enqueue(new Callback<List<Users>>() {
             @Override
-            public void onResponse(Call<List<Results>> call, Response<List<Results>> response) {
-                List<Results> myheroList = response.body();
-//                String[] oneHeroes = new String[myheroList.size()];
-                Log.d("TAG", "Success");
-//                Log.d("TAG", myheroList.toString());
-                Toast.makeText(getApplicationContext(), "Successfully fetched", Toast.LENGTH_LONG).show();
-                for (int i =0;i<myheroList.size();i++) {
-//                    oneHeroes[i] = myheroList.get(i).getName();
-//                    Log.d("TAG", oneHeroes[i]);
-                        myHeroes.add(myheroList.get(i).getName());
-
+            public void onResponse(Call<List<Users>> call, Response<List<Users>> response) {
+                if (response.isSuccessful()) {
+                    List<Users> usersData = response.body();
+                    UserAdapter userAdapter = new UserAdapter(usersData);
+//                    userAdapter.setData(userData);
+                    recyclerView.setAdapter(userAdapter);
                 }
-                myAdapter.notifyDataSetChanged();
-//                superList.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, oneHeroes));
+
             }
 
             @Override
-            public void onFailure(Call<List<Results>> call, Throwable t) {
+            public void onFailure(Call<List<Users>> call, Throwable t) {
                 Log.d("TAG", "Error");
                 Toast.makeText(getApplicationContext(), "An error has been occured", Toast.LENGTH_LONG).show();
             }
