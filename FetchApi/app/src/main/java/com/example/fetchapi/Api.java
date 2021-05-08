@@ -9,6 +9,6 @@ public interface Api {
 
     String BASE_URL = "https://jsonplaceholder.typicode.com/";
 
-    @GET("users")
+    @GET("photos")
     Call<List<Users>> getUsers();
 }

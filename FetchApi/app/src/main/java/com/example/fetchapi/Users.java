@@ -4,22 +4,30 @@ import com.google.gson.annotations.SerializedName;
 
 public class Users {
 
-    @SerializedName("name")
-    private String name;
+    @SerializedName("title")
+    private String title;
 
 
-    @SerializedName("email")
-    private String email;
+    @SerializedName("thumbnailUrl")
+    private String thumbNail;
 
-    public Users(String name, String email) {
-        this.name = name;
-        this.email = email;
+    @SerializedName("url")
+    private String url;
+
+    public Users(String title, String thumbNail, String url) {
+        this.title = title;
+        this.thumbNail = thumbNail;
+        this.url = url;
     }
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public String getEmail() {
-        return email;
+    public String getThumbNail() {
+        return thumbNail;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }
